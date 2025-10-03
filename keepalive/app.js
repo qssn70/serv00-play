@@ -10,7 +10,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use('/static', express.static(path.join(__dirname, 'static')))
 const user = require('child_process').execSync('whoami').toString().trim()
-const serv00PlayDir = `/home/${user}/serv00-play`
+const serv00PlayDir = `/home/${user}/toolbox`
 const keepaliveScript = `${serv00PlayDir}/keepalive.sh`
 
 // 读取配置文件

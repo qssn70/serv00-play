@@ -1,9 +1,9 @@
 #!/bin/bash
 
 installpath="$HOME"
-source ${installpath}/serv00-play/utils.sh
+source ${installpath}/toolbox/utils.sh
 
-LOCKFILE="$installpath/serv00-play/.keepalive.lock"
+LOCKFILE="$installpath/toolbox/.keepalive.lock"
 
 # 检查是否已经有一个实例在运行
 if [ -e "$LOCKFILE" ]; then
@@ -46,7 +46,7 @@ checkHy2Alive() {
 sendMsg() {
   local msg=$1
   if [ -n "$msg" ]; then
-    cd $installpath/serv00-play
+    cd $installpath/toolbox
     msg="Host:$host, user:$user, $msg"
     if [ "$sendtype" == "1" ]; then
       ./tgsend.sh "$msg"
@@ -62,7 +62,7 @@ sendMsg() {
 checkResetCron() {
   echo "run checkResetCron"
   local msg=""
-  cd ${installpath}/serv00-play/
+  cd ${installpath}/toolbox/
   tm=$(jq -r ".chktime" config.json)
   if [ "$tm" == "null" ]; then
     return
@@ -97,8 +97,8 @@ EOF
 
 autoUpdate() {
   echo "正在自动更新代码..."
-  if [ -d ${installpath}/serv00-play ]; then
-    cd ${installpath}/serv00-play/
+  if [ -d ${installpath}/toolbox ]; then
+    cd ${installpath}/toolbox/
     git stash
     timeout 15s git pull
     echo "更新完毕"
@@ -108,15 +108,15 @@ autoUpdate() {
     chmod +x ./keepalive.sh
     chmod +x ./tgsend.sh
     chmod +x ./wxsend.sh
-    chmod +x ${installpath}/serv00-play/singbox/start.sh
-    chmod +x ${installpath}/serv00-play/singbox/killsing-box.sh
-    chmod +x ${installpath}/serv00-play/ssl/cronSSL.sh
+    chmod +x ${installpath}/toolbox/singbox/start.sh
+    chmod +x ${installpath}/toolbox/singbox/killsing-box.sh
+    chmod +x ${installpath}/toolbox/ssl/cronSSL.sh
   fi
 
 }
 
 startNeZhaAgent() {
-  local workedir="${installpath}/serv00-play/nezha"
+  local workedir="${installpath}/toolbox/nezha"
   cd ${workedir}
   local config="nezha.json"
   if [[ ! -e "$config" ]]; then
@@ -154,7 +154,7 @@ startNeZhaAgent() {
 }
 
 startMtg() {
-  cd ${installpath}/serv00-play/dmtg
+  cd ${installpath}/toolbox/dmtg
 
   config="config.json"
 
@@ -172,7 +172,7 @@ startMtg() {
 }
 
 startNeZhaDashboard() {
-  cd ${installpath}/serv00-play/nezha-board
+  cd ${installpath}/toolbox/nezha-board
   if checkProcAlive nezha-dashboard; then
     stopNeZhaDashboard
   fi
@@ -186,7 +186,7 @@ startNeZhaDashboard() {
 }
 
 startAlist() {
-  alistpath="${installpath}/serv00-play/alist"
+  alistpath="${installpath}/toolbox/alist"
 
   if [[ -d "$alistpath/data" && -e "$alistpath/alist" ]]; then
     echo "正在启动alist..."
@@ -213,13 +213,13 @@ startAlist() {
 }
 
 startSunPanel() {
-  cd ${installpath}/serv00-play/sunpanel
+  cd ${installpath}/toolbox/sunpanel
   cmd="nohup ./sun-panel >/dev/null 2>&1 &"
   eval "$cmd"
 }
 
 startWebSSH() {
-  cd ${installpath}/serv00-play/webssh
+  cd ${installpath}/toolbox/webssh
   ssh_port=$(jq -r ".port" config.json)
   cmd="nohup ./wssh --port=$ssh_port  --fbidhttp=False --wpintvl=30 --xheaders=False --encoding='utf-8' --delay=10  >/dev/null 2>&1 &"
   eval "$cmd"
@@ -236,7 +236,7 @@ if [[ "$autoUp" == "autoupdate" ]]; then
 fi
 
 echo "Host:$host, user:$user"
-cd ${installpath}/serv00-play/
+cd ${installpath}/toolbox/
 
 if [[ -n "$autoUp" ]]; then
   makeMsgConfig
@@ -334,7 +334,7 @@ for obj in "${monitor[@]}"; do
     fi
   elif [ "$obj" == "vmess" ]; then
     if ! checkvmessAlive; then
-      cd ${installpath}/serv00-play/singbox
+      cd ${installpath}/toolbox/singbox
       chmod +x ./start.sh && ./start.sh 1 keep
       sleep 1
       if ! checkvmessAlive; then
@@ -347,7 +347,7 @@ for obj in "${monitor[@]}"; do
   elif [[ "$obj" == "hy2/vmess+ws" || "$obj" == "hy2" ]]; then
     if ! checkHy2Alive; then
       #echo "重启serv00sb中..."
-      cd ${installpath}/serv00-play/singbox
+      cd ${installpath}/toolbox/singbox
       chmod +x ./start.sh && ./start.sh 2 keep
       sleep 1
       if ! checkHy2Alive; then
@@ -358,7 +358,7 @@ for obj in "${monitor[@]}"; do
     fi
   elif [ "$obj" == "nezha-agent" ]; then
     if ! checknezhaAgentAlive; then
-      cd ${installpath}/serv00-play/nezha
+      cd ${installpath}/toolbox/nezha
       startNeZhaAgent
       sleep 1
       if ! checknezhaAgentAlive; then
@@ -369,7 +369,7 @@ for obj in "${monitor[@]}"; do
     fi
   elif [ "$obj" == "nezha-dashboard" ]; then
     if ! checkProcAlive "nezha-dashboard"; then
-      cd ${installpath}/serv00-play/nezha-board
+      cd ${installpath}/toolbox/nezha-board
       startNeZhaDashboard
       sleep 1
       if ! checkProcAlive "nezha-dashboard"; then
@@ -380,7 +380,7 @@ for obj in "${monitor[@]}"; do
     fi
   elif [ "$obj" == "mtg" ]; then
     if ! checkMtgAlive; then
-      cd ${installpath}/serv00-play/dmtg
+      cd ${installpath}/toolbox/dmtg
       startMtg
       sleep 1
       if ! checkMtgAlive; then
@@ -423,7 +423,7 @@ fi
 
 if [[ "$autoUpdateHyIP" == "Y" ]]; then
   echo "正在自动更新HY2IP..."
-  cd ${installpath}/serv00-play/singbox
+  cd ${installpath}/toolbox/singbox
   chmod +x ./autoUpdateHyIP.sh && ./autoUpdateHyIP.sh
 fi
 

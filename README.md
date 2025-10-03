@@ -10,7 +10,7 @@
 ## 安装说明
 
 ```s
-bash <(curl -Ls https://raw.githubusercontent.com/frankiejun/serv00-play/main/start.sh) --install
+bash <(curl -Ls https://raw.githubusercontent.com/frankiejun/toolbox/main/start.sh) --install
 ```
 
 ## 变量说明
@@ -36,7 +36,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/frankiejun/serv00-play/main/st
 1.定时自动登录各个主机，起到保号作用(因 serv00 需要每 3 个月登录一次)  
 2.执行兜底保活策略  
 3.检查主机上保活用的 cronjob 是否被删，若被删重建保活 cronjob  
-4.自动更新 serv00-play 代码  
+4.自动更新 toolbox 代码  
 5.同步更新 telegram、微信等参数  
 6.默认情况下只有登录失败才有 TG 消息通知，提醒可能封号(平时正常不会给你发消息，发消息之时便是你封号之日)
 也可以设定 LOGININFO=Y，每次保活都会做汇总通知(但相信我，你不会喜欢这个功能)  
@@ -77,7 +77,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/frankiejun/serv00-play/main/st
 临时隧道已失效，请使用固定隧道名，[如何申请固定隧道名](https://youtu.be/KyMvtWknu-k)  
 argo+vmess 的搭建教学看[这里](https://youtu.be/nmb2F6uBKsg?si=v8twWIkIjsN8UYb-)
 
-由于本项目一直在迭代开发，界面会有些变化，想详细了解，可以看这一系列视频[serv00-play 系列](https://www.youtube.com/playlist?list=PLaMnUIjE3d5zArqlLzTU2oMZ0h-5VP6C0)
+由于本项目一直在迭代开发，界面会有些变化，想详细了解，可以看这一系列视频[toolbox 系列](https://www.youtube.com/playlist?list=PLaMnUIjE3d5zArqlLzTU2oMZ0h-5VP6C0)
 
 ## 赞助
 

@@ -168,7 +168,7 @@ delCron() {
 addCron() {
   local tm=$1
   crontab -l | grep -v "keepalive" >mycron
-  echo "*/$tm * * * * bash ${installpath}/serv00-play/keepalive.sh > /dev/null 2>&1 " >>mycron
+  echo "*/$tm * * * * bash ${installpath}/toolbox/keepalive.sh > /dev/null 2>&1 " >>mycron
   crontab mycron >/dev/null 2>&1
   rm mycron
 
@@ -735,19 +735,19 @@ show_ip_status() {
 }
 
 stop_sing_box() {
-  cd ${installpath}/serv00-play/singbox
+  cd ${installpath}/toolbox/singbox
   if [ -f killsing-box.sh ]; then
     chmod 755 ./killsing-box.sh
     ./killsing-box.sh
   else
-    echo "请先安装serv00-play!!!"
+    echo "请先安装toolbox!!!"
     return
   fi
   echo "已停掉sing-box!"
 }
 
 start_sing_box() {
-  cd ${installpath}/serv00-play/singbox
+  cd ${installpath}/toolbox/singbox
 
   if [[ ! -e "singbox.json" ]]; then
     red "请先进行配置!"

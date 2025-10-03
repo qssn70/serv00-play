@@ -2,11 +2,11 @@
 
 installpath="$HOME"
 USER="$(whoami)"
-if [[ -e "$installpath/serv00-play" ]]; then
-  source ${installpath}/serv00-play/utils.sh
+if [[ -e "$installpath/toolbox" ]]; then
+  source ${installpath}/toolbox/utils.sh
 fi
 
-cd ${installpath}/serv00-play/singbox
+cd ${installpath}/toolbox/singbox
 if [[ ! -e "singbox.json" || ! -e "config.json" ]]; then
   red "未安装节点，请先安装!"
   exit

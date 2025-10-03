@@ -3,7 +3,7 @@
 text=$1
 
 sendKey=${WXSENDKEY}
-title="msg_from_serv00-play"
+title="msg_from_toolbox"
 URL="https://sctapi.ftqq.com/$sendKey.send?"
 
 if [[ -z ${sendKey} ]]; then

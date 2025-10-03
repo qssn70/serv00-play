@@ -19,16 +19,16 @@ red() {
 }
 installpath="$HOME"
 USER="$(whoami)"
-if [[ -e "$installpath/serv00-play" ]]; then
-  source ${installpath}/serv00-play/utils.sh
+if [[ -e "$installpath/toolbox" ]]; then
+  source ${installpath}/toolbox/utils.sh
 fi
 
 PS3="请选择(输入0退出): "
 install() {
   local input=$1
   cd ${installpath}
-  if [ -d "serv00-play" ]; then
-    cd "serv00-play"
+  if [ -d "toolbox" ]; then
+    cd "toolbox"
     git stash
     if git pull origin main; then
       git fetch --tags
@@ -38,10 +38,10 @@ install() {
       chmod +x ./keepalive.sh
       chmod +x ./tgsend.sh
       chmod +x ./wxsend.sh
-      chmod +x ${installpath}/serv00-play/singbox/start.sh
-      chmod +x ${installpath}/serv00-play/singbox/killsing-box.sh
-      chmod +x ${installpath}/serv00-play/singbox/autoUpdateHyIP.sh
-      chmod +x ${installpath}/serv00-play/ssl/cronSSL.sh
+      chmod +x ${installpath}/toolbox/singbox/start.sh
+      chmod +x ${installpath}/toolbox/singbox/killsing-box.sh
+      chmod +x ${installpath}/toolbox/singbox/autoUpdateHyIP.sh
+      chmod +x ${installpath}/toolbox/ssl/cronSSL.sh
       red "请重新启动脚本!"
       exit 0
     fi
@@ -49,28 +49,28 @@ install() {
 
   cd ${installpath}
   echo "正在安装..."
-  if ! git clone https://github.com/frankiejun/serv00-play.git; then
+  if ! git clone https://github.com/frankiejun/toolbox.git; then
     echo -e "${RED}安装失败!${RESET}"
     exit 1
   fi
   devil binexec on
   touch .profile
-  cat .profile | perl ./serv00-play/mkprofile.pl >tmp_profile
+  cat .profile | perl ./toolbox/mkprofile.pl >tmp_profile
   mv -f tmp_profile .profile
-  if [[ ! -e "${installpath}/serv00-play" ]]; then
+  if [[ ! -e "${installpath}/toolbox" ]]; then
     red "安装不成功！"
     return
   fi
 
-  cd ${installpath}/serv00-play
+  cd ${installpath}/toolbox
   chmod +x ./start.sh
   chmod +x ./keepalive.sh
   chmod +x ./tgsend.sh
   chmod +x ./wxsend.sh
-  chmod +x ${installpath}/serv00-play/singbox/start.sh
-  chmod +x ${installpath}/serv00-play/singbox/killsing-box.sh
-  chmod +x ${installpath}/serv00-play/singbox/autoUpdateHyIP.sh
-  chmod +x ${installpath}/serv00-play/ssl/cronSSL.sh
+  chmod +x ${installpath}/toolbox/singbox/start.sh
+  chmod +x ${installpath}/toolbox/singbox/killsing-box.sh
+  chmod +x ${installpath}/toolbox/singbox/autoUpdateHyIP.sh
+  chmod +x ${installpath}/toolbox/ssl/cronSSL.sh
   if [ -z "$input" ]; then
     read -p "$(yellow 设置完毕,需要重新登录才能生效，是否重新登录？[y/n] [y]:)" input
     input=${input:-y}
@@ -84,7 +84,7 @@ install() {
 }
 
 showSingBoxInfo() {
-  cd ${installpath}/serv00-play/singbox
+  cd ${installpath}/toolbox/singbox
 
   if [ ! -f singbox.json ]; then
     red "配置文件不存在，请先行配置!"
@@ -121,7 +121,7 @@ chooseSingbox() {
 }
 
 setConfig() {
-  cd ${installpath}/serv00-play/
+  cd ${installpath}/toolbox/
 
   if [ -f config.json ]; then
     echo "目前已有配置:"
@@ -271,7 +271,7 @@ createConfigFile() {
     addCron $tm
   fi
 
-  chmod +x ${installpath}/serv00-play/keepalive.sh
+  chmod +x ${installpath}/toolbox/keepalive.sh
   echo -e "${YELLOW} 设置完成! ${RESET} "
 
 }
@@ -634,10 +634,10 @@ EOF
 }
 
 configSingBox() {
-  if ! checkInstalled "serv00-play"; then
+  if ! checkInstalled "toolbox"; then
     return 1
   fi
-  cd ${installpath}/serv00-play/singbox
+  cd ${installpath}/toolbox/singbox
 
   loadPort
   if [ -e singbox.json ]; then
@@ -1094,7 +1094,7 @@ uninstall() {
     delCron
     stopSingBox
     cd $HOME
-    rm -rf serv00-play
+    rm -rf toolbox
     echo "bye!"
   fi
 }
@@ -1129,7 +1129,7 @@ InitServer() {
 }
 
 manageNeZhaAgent() {
-  if ! checkInstalled "serv00-play"; then
+  if ! checkInstalled "toolbox"; then
     return 1
   fi
   while true; do
@@ -1178,7 +1178,7 @@ manageNeZhaAgent() {
 }
 
 installNeZhaAgent() {
-  local workedir="${installpath}/serv00-play/nezha"
+  local workedir="${installpath}/toolbox/nezha"
   if [ ! -e "${workedir}" ]; then
     mkdir -p "${workedir}"
   fi
@@ -1293,13 +1293,13 @@ EOF
 }
 
 updateAgent() {
-  exepath="${installpath}/serv00-play/nezha/nezha-agent"
+  exepath="${installpath}/toolbox/nezha/nezha-agent"
   if [ ! -e "$exepath" ]; then
     red "未安装探针，请先安装！！!"
     return
   fi
 
-  cd ${installpath}/serv00-play/nezha
+  cd ${installpath}/toolbox/nezha
 
   if ! check_update_from_net "nezha-agent"; then
     return 1
@@ -1321,12 +1321,12 @@ updateAgent() {
 }
 
 startAgent() {
-  local exepath="${installpath}/serv00-play/nezha/nezha-agent"
+  local exepath="${installpath}/toolbox/nezha/nezha-agent"
   if [ ! -e "${exepath}" ]; then
     red "未安装探针，请先安装！！!"
     return
   fi
-  cd "${installpath}/serv00-play/nezha"
+  cd "${installpath}/toolbox/nezha"
 
   local configfile="./nezha.json"
   if [ ! -e "$configfile" ]; then
@@ -1373,14 +1373,14 @@ uninstallAgent() {
     if checknezhaAgentAlive; then
       stopNeZhaAgent
     fi
-    local workedir="${installpath}/serv00-play/nezha"
+    local workedir="${installpath}/toolbox/nezha"
     rm -rf $workedir
     green "卸载完毕!"
   fi
 
 }
 manageNeZhaBoard() {
-  if ! checkInstalled "serv00-play"; then
+  if ! checkInstalled "toolbox"; then
     return 1
   fi
   while true; do
@@ -1428,7 +1428,7 @@ manageNeZhaBoard() {
 }
 
 installNeZhaDashboard() {
-  local workedir="${installpath}/serv00-play/nezha-board"
+  local workedir="${installpath}/toolbox/nezha-board"
   if [ ! -e "${workedir}" ]; then
     mkdir -p "${workedir}"
   fi
@@ -1511,11 +1511,11 @@ EOF
   green "面板安装成功!"
 }
 startNeZhaDashboard() {
-  if [ ! -e "${installpath}/serv00-play/nezha-board/nezha-dashboard" ]; then
+  if [ ! -e "${installpath}/toolbox/nezha-board/nezha-dashboard" ]; then
     red "未安装面板，请先安装！！!"
     return
   fi
-  cd ${installpath}/serv00-play/nezha-board
+  cd ${installpath}/toolbox/nezha-board
   if checkProcAlive nezha-dashboard; then
     stopNeZhaDashboard
   fi
@@ -1539,11 +1539,11 @@ stopNeZhaDashboard() {
   fi
 }
 updateNeZhaDashboard() {
-  if [ ! -e "${installpath}/serv00-play/nezha-board/nezha-dashboard" ]; then
+  if [ ! -e "${installpath}/toolbox/nezha-board/nezha-dashboard" ]; then
     red "未安装面板，请先安装！！!"
     return
   fi
-  cd ${installpath}/serv00-play/nezha-board
+  cd ${installpath}/toolbox/nezha-board
 
   if ! check_update_from_net "nezha-dashboard"; then
     return 1
@@ -1562,7 +1562,7 @@ updateNeZhaDashboard() {
 }
 
 uninstallNeZhaDashboard() {
-  local workedir="${installpath}/serv00-play/nezha-board"
+  local workedir="${installpath}/toolbox/nezha-board"
   if [ ! -e "${workedir}" ]; then
     red "未安装面板!"
     return
@@ -1578,7 +1578,7 @@ setCnTimeZone() {
   if [ "$input" = "y" ]; then
     devil binexec on
     touch .profile
-    cat .profile | perl ./serv00-play/mkprofile.pl >tmp_profile
+    cat .profile | perl ./toolbox/mkprofile.pl >tmp_profile
     mv -f tmp_profile .profile
 
     read -p "$(yellow 设置完毕,需要重新登录才能生效，是否重新登录？[y/n] [y]:)" input
@@ -1669,14 +1669,14 @@ uninstallMtg() {
     if checkProcAlive mtg; then
       stopMtg
     fi
-    cd ${installpath}/serv00-play
+    cd ${installpath}/toolbox
     rm -rf dmtg
     green "卸载完毕！"
   fi
 }
 
 installMtg() {
-  local workedir="${installpath}/serv00-play/dmtg"
+  local workedir="${installpath}/toolbox/dmtg"
   if [ ! -e "${workedir}" ]; then
     mkdir -p "${workedir}"
   fi
@@ -1721,7 +1721,7 @@ EOF
 }
 
 startMtg() {
-  cd ${installpath}/serv00-play
+  cd ${installpath}/toolbox
 
   if [ ! -e "dmtg" ]; then
     ehco "未安装mtproto，请先行安装配置!"
@@ -1780,10 +1780,10 @@ stopMtg() {
 }
 
 mtprotoServ() {
-  if ! checkInstalled "serv00-play"; then
+  if ! checkInstalled "toolbox"; then
     return 1
   fi
-  cd ${installpath}/serv00-play
+  cd ${installpath}/toolbox
 
   if [ ! -e "dmtg" ]; then
     mkdir -p dmtg
@@ -1858,11 +1858,11 @@ update_http_port() {
 }
 
 installAlist() {
-  if ! checkInstalled "serv00-play"; then
+  if ! checkInstalled "toolbox"; then
     return 1
   fi
-  cd ${installpath}/serv00-play/ || return 1
-  alistpath="${installpath}/serv00-play/alist"
+  cd ${installpath}/toolbox/ || return 1
+  alistpath="${installpath}/toolbox/alist"
 
   if [[ ! -e "$alistpath" ]]; then
     mkdir -p $alistpath
@@ -1905,7 +1905,7 @@ installAlist() {
 }
 
 startAlist() {
-  alistpath="${installpath}/serv00-play/alist"
+  alistpath="${installpath}/toolbox/alist"
   cd $alistpath
   domain=$(jq -r ".domain" config.json)
 
@@ -1963,7 +1963,7 @@ uninstallProc() {
     webip=$(jq -r ".webip" config.json)
     resp=$(devil ssl www del $webIp $domain)
     resp=$(devil www del $domain --remove)
-    cd ${installpath}/serv00-play
+    cd ${installpath}/toolbox
     rm -rf $path
     green "卸载完毕!"
   fi
@@ -1971,13 +1971,13 @@ uninstallProc() {
 }
 
 uninstallAlist() {
-  alistpath="${installpath}/serv00-play/alist"
+  alistpath="${installpath}/toolbox/alist"
   uninstallProc "$alistpath" alist
 
 }
 
 resetAdminPass() {
-  alistpath="${installpath}/serv00-play/alist"
+  alistpath="${installpath}/toolbox/alist"
   cd $alistpath
 
   output=$(./alist admin random 2>&1)
@@ -1985,7 +1985,7 @@ resetAdminPass() {
 }
 
 updateAlist() {
-  cd ${installpath}/serv00-play/alist || (echo "未安装alist" && return)
+  cd ${installpath}/toolbox/alist || (echo "未安装alist" && return)
 
   if ! check_update_from_net "alist"; then
     return 1
@@ -1999,7 +1999,7 @@ updateAlist() {
 }
 
 alistServ() {
-  if ! checkInstalled "serv00-play"; then
+  if ! checkInstalled "toolbox"; then
     return 1
   fi
   while true; do
@@ -2224,7 +2224,7 @@ applyLE() {
   local l_domain=$1
   local l_webip=$2
   local nointeraction=$3
-  workpath="${installpath}/serv00-play/ssl"
+  workpath="${installpath}/toolbox/ssl"
   cd "$workpath"
 
   #echo "domain=$l_domain, webip=$l_webip, nointeraction=$nointeraction"
@@ -2292,7 +2292,7 @@ applyLE() {
 }
 
 selfSSL() {
-  workpath="${installpath}/serv00-play/ssl"
+  workpath="${installpath}/toolbox/ssl"
   cd "$workpath"
 
   read -p "请输入待申请证书的域名:" self_domain
@@ -2387,7 +2387,7 @@ domainSSLServ() {
 }
 
 installRoot() {
-  workpath="${installpath}/serv00-play/root"
+  workpath="${installpath}/toolbox/root"
   if [[ ! -e $workpath ]]; then
     mkdir -p "$workpath"
   fi
@@ -2419,7 +2419,7 @@ installRoot() {
 }
 
 enterRoot() {
-  workpath="${installpath}/serv00-play/root/MrChrootBSD"
+  workpath="${installpath}/toolbox/root/MrChrootBSD"
   if [[ ! -e "$workpath/mrchroot" ]]; then
     red "未安装mrchroot，请先行安装!"
     return
@@ -2445,7 +2445,7 @@ enterRoot() {
 uninstallRoot() {
   SESSION_NAME="rootsession"
 
-  if [[ ! -e "${installpath}/serv00-play/root" ]]; then
+  if [[ ! -e "${installpath}/toolbox/root" ]]; then
     echo "未安装root，无需卸载!"
     return
   fi
@@ -2459,7 +2459,7 @@ uninstallRoot() {
       screen -S "$SESSION_NAME" -X quit
     fi
 
-    workpath="${installpath}/serv00-play/"
+    workpath="${installpath}/toolbox/"
     cd $workpath
     rm -rf ./root
   fi
@@ -2522,7 +2522,7 @@ checkProcStatus() {
 }
 
 sunPanelServ() {
-  if ! checkInstalled "serv00-play"; then
+  if ! checkInstalled "toolbox"; then
     return 1
   fi
   while true; do
@@ -2574,7 +2574,7 @@ sunPanelServ() {
 }
 
 import_accounts() {
-  local workdir="${installpath}/serv00-play/sunpanel"
+  local workdir="${installpath}/toolbox/sunpanel"
   if ! vip_statement; then
     return 1
   fi
@@ -2598,7 +2598,7 @@ import_accounts() {
 }
 
 import_accounts() {
-  local workdir="${installpath}/serv00-play/sunpanel"
+  local workdir="${installpath}/toolbox/sunpanel"
   if ! vip_statement; then
     return 1
   fi
@@ -2622,12 +2622,12 @@ import_accounts() {
 }
 
 uninstallSunPanel() {
-  local workdir="${installpath}/serv00-play/sunpanel"
+  local workdir="${installpath}/toolbox/sunpanel"
   uninstallProc "$workdir" "sun-panel"
 }
 
 resetSunPanelPwd() {
-  local exepath="${installpath}/serv00-play/sunpanel/sun-panel"
+  local exepath="${installpath}/toolbox/sunpanel/sun-panel"
   if [[ ! -e $exepath ]]; then
     echo "未安装，请先安装!"
     return
@@ -2636,7 +2636,7 @@ resetSunPanelPwd() {
   input=${input:-n}
 
   if [[ "$input" == "y" ]]; then
-    local workdir="${installpath}/serv00-play/sunpanel"
+    local workdir="${installpath}/toolbox/sunpanel"
     cd $workdir
     ./sun-panel -password-reset
   fi
@@ -2652,8 +2652,8 @@ stopSunPanel() {
 }
 
 installSunPanel() {
-  local workdir="${installpath}/serv00-play/sunpanel"
-  local exepath="${installpath}/serv00-play/sunpanel/sun-panel"
+  local workdir="${installpath}/toolbox/sunpanel"
+  local exepath="${installpath}/toolbox/sunpanel/sun-panel"
   if [[ -e $exepath ]]; then
     echo "已安装，请勿重复安装!"
     return
@@ -2795,8 +2795,8 @@ EOF
 }
 
 startSunPanel() {
-  local workdir="${installpath}/serv00-play/sunpanel"
-  local exepath="${installpath}/serv00-play/sunpanel/sun-panel"
+  local workdir="${installpath}/toolbox/sunpanel"
+  local exepath="${installpath}/toolbox/sunpanel/sun-panel"
   if [[ ! -e $exepath ]]; then
     red "未安装，请先安装!"
     return
@@ -2825,7 +2825,7 @@ startSunPanel() {
 }
 
 burnAfterReadingServ() {
-  if ! checkInstalled "serv00-play"; then
+  if ! checkInstalled "toolbox"; then
     return 1
   fi
   while true; do
@@ -2859,7 +2859,7 @@ burnAfterReadingServ() {
 }
 
 installBurnReading() {
-  local workdir="${installpath}/serv00-play/burnreading"
+  local workdir="${installpath}/toolbox/burnreading"
 
   if [[ ! -e "$workdir" ]]; then
     mkdir -p $workdir
@@ -2912,7 +2912,7 @@ installBurnReading() {
 }
 
 uninstallBurnReading() {
-  local workdir="${installpath}/serv00-play/burnreading"
+  local workdir="${installpath}/toolbox/burnreading"
 
   if [[ ! -e "$workdir" ]]; then
     echo "已没有可以卸载的服务!"
@@ -2928,7 +2928,7 @@ uninstallBurnReading() {
     input=${input:-n}
     if [[ "$input" == "y" ]]; then
       delete_all_domains
-      rm -rf "${installpath}/serv00-play/burnreading"
+      rm -rf "${installpath}/toolbox/burnreading"
     else
       read -p "请输入要删除的服务的域名:" domain
       delete_domain "$domain"
@@ -2942,7 +2942,7 @@ uninstallBurnReading() {
   input=${input:-n}
   if [[ "$input" == "y" ]]; then
     delete_all_domains
-    rm -rf "${installpath}/serv00-play/burnreading"
+    rm -rf "${installpath}/toolbox/burnreading"
   else
     read -p "请输入要删除的服务的域名:" domain
     delete_domain "$domain"
@@ -2951,7 +2951,7 @@ uninstallBurnReading() {
 }
 
 websshServ() {
-  if ! checkInstalled "serv00-play"; then
+  if ! checkInstalled "toolbox"; then
     return 1
   fi
   while true; do
@@ -2995,12 +2995,12 @@ websshServ() {
 }
 
 uninstallWebSSH() {
-  local workdir="${installpath}/serv00-play/webssh"
+  local workdir="${installpath}/toolbox/webssh"
   uninstallProc "$workdir" "wssh"
 }
 
 installWebSSH() {
-  local workdir="${installpath}/serv00-play/webssh"
+  local workdir="${installpath}/toolbox/webssh"
   if [[ ! -e "$workdir" ]]; then
     mkdir -p $workdir
   fi
@@ -3079,7 +3079,7 @@ stopWebSSH() {
 }
 
 startWebSSH() {
-  local workdir="${installpath}/serv00-play/webssh"
+  local workdir="${installpath}/toolbox/webssh"
   local configfile="$workdir/config.json"
   if [ ! -e "$configfile" ]; then
     echo "未安装，请先安装!"
@@ -3113,14 +3113,14 @@ nonServ() {
   cat <<EOF
    占坑位，未开发功能，敬请期待！
    如果你知道有好的项目，可以到我的频道进行留言投稿，
-   我会分析可行性，择优取录，所以你喜欢的项目有可能会集成到serv00-play的项目中。
+   我会分析可行性，择优取录，所以你喜欢的项目有可能会集成到toolbox的项目中。
    留言板：https://t.me/fanyou_channel/40
 EOF
 }
 
 checkInstalled() {
   local model=$1
-  if [[ "$model" == "serv00-play" ]]; then
+  if [[ "$model" == "toolbox" ]]; then
     if [[ ! -d "${installpath}/$model" ]]; then
       red "请先安装$model !!!"
       return 1
@@ -3128,7 +3128,7 @@ checkInstalled() {
       return 0
     fi
   else
-    if [[ ! -d "${installpath}/serv00-play/$model" ]]; then
+    if [[ ! -d "${installpath}/toolbox/$model" ]]; then
       red "请先安装$model !!!"
       return 1
     else
@@ -3139,7 +3139,7 @@ checkInstalled() {
 }
 
 changeHy2IP() {
-  cd ${installpath}/serv00-play/singbox
+  cd ${installpath}/toolbox/singbox
   if [[ ! -e "singbox.json" || ! -e "config.json" ]]; then
     red "未安装节点，请先安装!"
     return 1
@@ -3191,8 +3191,8 @@ changeHy2IP() {
 }
 
 linkAliveServ() {
-  workdir="${installpath}/serv00-play/linkalive"
-  if ! checkInstalled "serv00-play"; then
+  workdir="${installpath}/toolbox/linkalive"
+  if ! checkInstalled "toolbox"; then
     return 1
   fi
   if ! vip_statement "linkAliveStatment"; then
@@ -3221,7 +3221,7 @@ linkAliveServ() {
 }
 
 DSServ() {
-  if ! checkInstalled "serv00-play"; then
+  if ! checkInstalled "toolbox"; then
     return 1
   fi
   while true; do
@@ -3286,7 +3286,7 @@ EOF
 }
 
 batchAddDomains() {
-  local workdir="${installpath}/serv00-play/domains-support"
+  local workdir="${installpath}/toolbox/domains-support"
   if [[ ! -e $workdir ]]; then
     mkdir -p $workdir
   fi
@@ -3382,7 +3382,7 @@ doDsConfig() {
 }
 
 configDs() {
-  local workdir="${installpath}/serv00-play/domains-support"
+  local workdir="${installpath}/toolbox/domains-support"
   if [[ ! -e $workdir ]]; then
     red "未安装，请先安装!"
     return 1
@@ -3403,7 +3403,7 @@ configDs() {
 }
 
 startDs() {
-  local workdir="${installpath}/serv00-play/domains-support"
+  local workdir="${installpath}/toolbox/domains-support"
   cd $workdir
   if [[ ! -e "config.json" ]]; then
     red "未配置，请先配置!"
@@ -3426,7 +3426,7 @@ startDs() {
 }
 
 stopDs() {
-  local workdir="${installpath}/serv00-play/domains-support"
+  local workdir="${installpath}/toolbox/domains-support"
   cd $workdir
   if [[ ! -e "config.json" ]]; then
     red "未配置，请先配置!"
@@ -3444,7 +3444,7 @@ stopDs() {
 }
 
 addDomain() {
-  local workdir="${installpath}/serv00-play/domains-support"
+  local workdir="${installpath}/toolbox/domains-support"
   if [[ ! -e $workdir ]]; then
     mkdir -p $workdir
   fi
@@ -3594,7 +3594,7 @@ addDomain() {
 }
 
 delDomain() {
-  local workdir="${installpath}/serv00-play/domains-support"
+  local workdir="${installpath}/toolbox/domains-support"
   if [[ ! -e $workdir ]]; then
     red "未安装，请先安装!"
     return 1
@@ -3613,7 +3613,7 @@ delDomain() {
       return 1
     fi
     delete_all_domains
-    rm -rf "${installpath}/serv00-play/domains-support"
+    rm -rf "${installpath}/toolbox/domains-support"
     green "删除成功!"
     return 0
   fi
@@ -3625,14 +3625,14 @@ delDomain() {
 }
 
 keepAliveServ() {
-  if ! checkInstalled "serv00-play"; then
+  if ! checkInstalled "toolbox"; then
     return 1
   fi
   while true; do
     yellow "---------------------"
     echo "keepAlive:"
     echo "1. 安装"
-    echo "2. 更新(须先按1更新serv00-play)"
+    echo "2. 更新(须先按1更新toolbox)"
     echo "3. 更新保活时间间隔"
     echo "4. 修改token"
     echo "8. 卸载"
@@ -3676,7 +3676,7 @@ installkeepAlive() {
   local domain=$(getUserDoMain)
   domain="${domain,,}"
   local domainPath="${installpath}/domains/$domain/public_nodejs"
-  local workdir="${installpath}/serv00-play/keepalive"
+  local workdir="${installpath}/toolbox/keepalive"
   if [[ -e "$domainPath/config.json" ]]; then
     red "已安装,请勿重复安装!"
     return 1
@@ -3769,7 +3769,7 @@ updatekeepAlive() {
   local domain=$(getUserDoMain)
   domain="${domain,,}"
   domainPath="${installpath}/domains/$domain/public_nodejs"
-  workDir="$installpath/serv00-play/keepalive"
+  workDir="$installpath/toolbox/keepalive"
   if [[ ! -e "$domainPath/config.json" ]]; then
     red "未安装,请先安装!"
     return 1
@@ -3854,7 +3854,7 @@ vip_statement() {
 }
 
 getLatestVer() {
-  ver=$(git ls-remote --tags https://github.com/frankiejun/serv00-play.git | awk -F/ '{print $3}' | sort -V | tail -n 1)
+  ver=$(git ls-remote --tags https://github.com/frankiejun/toolbox.git | awk -F/ '{print $3}' | sort -V | tail -n 1)
   echo $ver
 }
 getCurrentVer() {
@@ -3867,7 +3867,7 @@ getCurrentVer() {
 }
 
 showMenu() {
-  art_wrod=$(figlet "serv00-play")
+  art_wrod=$(figlet "toolbox")
   echo "<------------------------------------------------------------------>"
   echo -e "${CYAN}${art_wrod}${RESET}"
   echo -e "${GREEN} 饭奇骏频道:https://www.youtube.com/@frankiejun8965 ${RESET}"
@@ -3876,7 +3876,7 @@ showMenu() {
   echo "<------------------------------------------------------------------>"
   echo "请选择一个选项:"
 
-  options=("安装/更新serv00-play项目" "sun-panel" "webssh" "阅后即焚" "linkalive" "设置保活的项目" "配置sing-box"
+  options=("安装/更新toolbox项目" "sun-panel" "webssh" "阅后即焚" "linkalive" "设置保活的项目" "配置sing-box"
     "运行sing-box" "停止sing-box" "显示sing-box节点信息" "快照恢复" "系统初始化" "前置工作及设置中国时区" "哪吒探针管理" "哪吒面板管理" "设置彩色开机字样" "显示本机IP"
     "mtproto代理" "alist管理" "端口管理" "域名证书管理" "一键root" "自动检测主机IP状态" "一键更换hy2的IP" "KeepAlive" "Domains-Support" "卸载")
 

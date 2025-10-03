@@ -2,8 +2,8 @@
 
 config="singbox.json"
 installpath="$HOME"
-if [[ -e "$installpath/serv00-play" ]]; then
-  source ${installpath}/serv00-play/utils.sh
+if [[ -e "$installpath/toolbox" ]]; then
+  source ${installpath}/toolbox/utils.sh
 fi
 
 VMPORT=$(jq -r ".VMPORT" $config)
@@ -95,7 +95,7 @@ $([[ "$type" =~ ^(1.3|2.4|2.5|3.3|4.4|4.5)$ ]] && echo $proxyip && echo "")
 
 EOF
   cat list
-  if [[ -e "${installpath}/serv00-play/linkalive/linkAlive.sh" ]]; then
+  if [[ -e "${installpath}/toolbox/linkalive/linkAlive.sh" ]]; then
     local domain=$(getUserDoMain)
     domain="${domain,,}"
     if [[ -e "${installpath}/domains/$domain/public_nodejs/config.json" ]]; then
